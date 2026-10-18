@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "587817569257",
+    "firebase_url": "https://digital-board-25242-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "digital-board-25242",
+    "storage_bucket": "digital-board-25242.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587817569257:android:b1b496ecb604b766245978",
+        "android_client_info": {
+          "package_name": "com.adnan.digitalboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8VCyONrsjKSHP0_ufcBfNl1FBqH3ohwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587817569257:android:ffaf0236e275fb5e245978",
+        "android_client_info": {
+          "package_name": "com.adnan.drawing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8VCyONrsjKSHP0_ufcBfNl1FBqH3ohwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

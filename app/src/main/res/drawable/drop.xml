@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@color/color_white"/>
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/color_purple"/>
+                    <corners android:radius="5dp"/>
+                </shape>
+            </item>
+            <item
+                android:gravity="center"
+                android:drawable="@drawable/ic_baseline_arrow_drop_down_circle_24"
+                android:left="50dp"
+                android:right="5dp"/>
+        </layer-list>
+    </item>
+</selector>

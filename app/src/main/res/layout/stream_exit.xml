@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/backgrnd_trans"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+        android:textSize="25sp"
+        android:textColor="@color/color_white"
+        android:gravity="center_horizontal"
+        android:id="@+id/exittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Do you want to exit the streaming?"
+        android:layout_below="@+id/banner_container"
+        android:fontFamily="@font/baumans"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        app:layout_constraintTop_toBottomOf="@+id/banner_container"/>
+    <TextView
+        android:textColor="@color/color_white"
+        android:gravity="center_horizontal"
+        android:id="@+id/msgText"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Do you want to exit streaming?"
+        android:layout_below="@+id/exittext"
+        android:fontFamily="@font/baumans"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        app:layout_constraintTop_toBottomOf="@+id/banner_container"/>
+
+    <Button
+        android:id="@+id/btn_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/msgText"
+        android:layout_alignEnd="@+id/exittext"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/backgrnd_btn"
+        android:fontFamily="@font/baumans"
+        android:padding="10dp"
+        android:text="@string/exit"
+        android:textColor="@color/color_carban_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exittext" />
+    <Button
+        android:textColor="@color/color_black"
+        android:id="@+id/btn_cancel"
+        android:background="@drawable/backgrnd_btn"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/cancel"
+        android:layout_below="@+id/msgText"
+        android:fontFamily="@font/baumans"
+        android:layout_alignStart="@+id/exittext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exittext"/>
+</RelativeLayout>

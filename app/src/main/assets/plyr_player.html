@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom YouTube Player</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <style>
+    body { margin: 0; background: black; }
+    .plyr__video-embed iframe { border: 0; width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div class="plyr__video-embed" id="player">
+    <iframe id="ytplayer" allowfullscreen allow="autoplay"></iframe>
+  </div>
+  
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script>
+    // Get videoId from query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('videoId') || 'dQw4w9WgXcQ'; // default fallback
+
+    // Set iframe src
+    const iframe = document.getElementById('ytplayer');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0&controls=1&autoplay=1&mute=1`;
+
+	iframe.onload = () => {
+  player.play(); // plyr player
+    };
+    // Init Plyr
+    const player = new Plyr('#player', {
+      youtube: {
+	    autoplay:true,
+        noCookie: true,
+        modestbranding: 1,
+        rel: 0,
+        showinfo: 0
+      }
+    });
+  </script>
+</body>
+</html>

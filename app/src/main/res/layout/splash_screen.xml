@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:background="@drawable/obr"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/gopit_main"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/app_logo"/>
+    <TextView
+        android:textSize="30sp"
+        android:textColor="@color/color_white"
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:shadowColor="@color/color_black"
+        android:shadowDx="5"
+        android:shadowDy="9"
+        android:shadowRadius="11"
+        android:layout_below="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/scriptmtbold"/>
+</RelativeLayout>

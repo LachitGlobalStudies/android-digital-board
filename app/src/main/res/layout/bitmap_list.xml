@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginBottom="5dp">
+    <ImageView
+        android:id="@+id/btmp"
+        android:background="@drawable/images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/images"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/gallery_image_background"/>
+    <TextView
+        android:textColor="@color/color_white"
+        android:gravity="center"
+        android:id="@+id/pad_id"
+        android:background="@drawable/backgrnd_semi_trans"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:text="@string/set_initial_size_to_0"
+        android:layout_alignParentStart="true"/>
+    <ImageView
+        android:id="@+id/delete"
+        android:background="@drawable/backgrnd_semi_trans"
+        android:padding="3dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_baseline_delete_forever_24"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/delete_image_from_gallery"
+        android:layout_alignParentEnd="true"/>
+</RelativeLayout>

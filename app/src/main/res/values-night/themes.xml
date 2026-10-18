@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!-- Base application theme. -->
+<style name="Base.Theme.NoteDesk" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Customize your light theme here. -->
+    <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+</style>
+
+<style name="Theme.NoteDesk" parent="Base.Theme.NoteDesk" />
+<style name="ActivityTheme">
+    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+</style>
+<style name="Theme.DigitalBoard" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here -->
+    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+</style>
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+</resources>

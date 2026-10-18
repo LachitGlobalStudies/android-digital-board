@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/backgrnd_trans"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/exittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/baumans"
+        android:gravity="center_horizontal"
+        android:text="@string/rtmp_text"
+        android:textColor="@color/color_white"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/security"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/security"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/baumans"
+        android:gravity="center_horizontal"
+        android:text="@string/rtmp_warn_text"
+        android:textColor="@color/color_red"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exittext"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exittext"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/baumans"
+        android:gravity="center_horizontal"
+        android:hint="rtmp://a.rtmp.youtube.com/live2/xxxx-xxxx-xxxx-xxxx-xxxx"
+        android:textColor="@color/color_blue"
+        android:textColorHint="@color/color_brown"
+        android:background="@drawable/bg_search_edittext"
+        android:textSize="25sp"
+        app:layout_constraintTop_toBottomOf="@+id/security"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/editActive"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/icons8_edit_100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/security" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox"
+        android:layout_marginStart="10dp"
+        android:shadowColor="@color/color_yellow"
+        app:layout_constraintTop_toBottomOf="@+id/url"
+        app:layout_constraintStart_toStartOf="parent"
+    />
+
+    <TextView
+        android:id="@+id/checkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I accept to use the url for future"
+        android:textColor="@color/color_red"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/checkBox"
+        app:layout_constraintTop_toBottomOf="@+id/url" />
+    <Button
+        android:id="@+id/rtmp_btn_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/exittext"
+        android:background="@drawable/backgrnd_btn"
+        android:fontFamily="@font/baumans"
+        android:layout_marginTop="10dp"
+        android:text="Go Live"
+        android:textColor="@color/color_carban_black"
+        app:layout_constraintTop_toBottomOf="@+id/checkText"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/rtmp_btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/backgrnd_btn"
+        android:fontFamily="@font/baumans"
+        android:text="@string/cancel"
+        android:textColor="@color/color_black"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

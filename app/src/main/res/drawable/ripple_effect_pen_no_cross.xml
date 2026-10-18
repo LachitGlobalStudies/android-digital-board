@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/color_white">
+    <item android:id="@android:id/statusBarBackground">
+        <shape android:shape="oval">
+            <size
+                android:height="25dp"
+                android:width="25dp"/>
+            <solid android:color="@color/trans"/>
+        </shape>
+    </item>
+    <item
+        android:gravity="center"
+        android:id="@android:id/background"
+        android:height="18dp"
+        android:width="18dp"
+        android:drawable="@drawable/pencil_48"/>
+</ripple>
