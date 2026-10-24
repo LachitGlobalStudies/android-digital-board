@@ -96,6 +96,11 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaProjection|camera|microphone" />
+         <service
+            android:name=".services.DrawingViewWebRtcService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
     </application>
 
 </manifest>
