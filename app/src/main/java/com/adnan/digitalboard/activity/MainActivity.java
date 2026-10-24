@@ -56,6 +56,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -83,6 +85,7 @@ import com.adnan.digitalboard.services.RtmpServce;
 import com.adnan.digitalboard.services.ScreenCaptureAndLiveService;
 import com.adnan.digitalboard.services.ScreenCaptureService;
 import com.adnan.digitalboard.services.ScreenWebRtcService;
+import com.adnan.digitalboard.services.DrawingViewWebRtcService;
 import com.adnan.digitalboard.utils.StudentTrackManager;
 import com.adnan.digitalboard.view.DrawingView;
 import com.adnan.digitalboard.adapters.FileListAdapter;
@@ -204,8 +207,21 @@ public class MainActivity extends AppCompatActivity implements PaymentResultList
     EditText mobileEditText,emailEditText;
     private Button chatBtn, paymentBtn,goLiveBtn,screenRecordBtn,bothBtn,cameraStramBtn;
     String deviceId , price="", planName="" ,browseUrl="https://www.google.com";
-    String[] appPermissions={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO};
+    public String[] getAppPermissions() {
+        List<String> perms = new ArrayList<>();
+        perms.add(Manifest.permission.CAMERA);
+        perms.add(Manifest.permission.RECORD_AUDIO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            perms.add(Manifest.permission.READ_MEDIA_IMAGES);
+            perms.add(Manifest.permission.READ_MEDIA_VIDEO);
+        } else {
+            perms.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                perms.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+        }
+        return perms.toArray(new String[0]);
+    }
     private NetworkChangeReceiver networkChangeReceiver=new NetworkChangeReceiver();
     public Chronometer chronometer;
     private long pausedTime;
@@ -1292,7 +1308,7 @@ fileExplorer.setOnClickListener(new View.OnClickListener() {
     private void showRoomIdAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Start Live Stream");
-        builder.setMessage("Enter Room ID to share your screen:");
+        builder.setMessage("Enter Room ID and choose what to share:");
 
         // Programmatically EditText তৈরি
         final EditText input = new EditText(this);
@@ -1304,11 +1320,33 @@ fileExplorer.setOnClickListener(new View.OnClickListener() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        lp.setMargins(40, 0, 40, 0);
+        lp.setMargins(40, 0, 40, 20);
+
+        final RadioGroup shareModeGroup = new RadioGroup(this);
+        shareModeGroup.setOrientation(RadioGroup.VERTICAL);
+
+        final RadioButton rbDrawingViewOnly = new RadioButton(this);
+        rbDrawingViewOnly.setId(View.generateViewId());
+        rbDrawingViewOnly.setText("A single app (DrawingView Only)");
+        rbDrawingViewOnly.setChecked(true);
+
+        final RadioButton rbEntireScreen = new RadioButton(this);
+        rbEntireScreen.setId(View.generateViewId());
+        rbEntireScreen.setText("Entire screen");
+
+        shareModeGroup.addView(rbDrawingViewOnly);
+        shareModeGroup.addView(rbEntireScreen);
+
+        LinearLayout.LayoutParams rgLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        rgLp.setMargins(40, 10, 40, 10);
 
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
         container.addView(input, lp);
+        container.addView(shareModeGroup, rgLp);
         builder.setView(container);
 
         // "Go Live" বাটন
@@ -1318,8 +1356,21 @@ fileExplorer.setOnClickListener(new View.OnClickListener() {
                 String roomId = input.getText().toString().trim();
                 if (!roomId.isEmpty()) {
                     currentRoomId = roomId;
-                    Intent screenCaptureIntent=mediaProjectionManager.createScreenCaptureIntent();
-                    startActivityForResult(screenCaptureIntent,REQUEST_CODE_WEBRTC_STREAM);
+                    if (rbDrawingViewOnly.isChecked()) {
+                        // Stream ONLY the DrawingView without full-screen MediaProjection
+                        DrawingViewWebRtcService.setDrawingView(drawingView);
+                        startService(DrawingViewWebRtcService.getStartIntent(MainActivity.this, currentRoomId));
+                        isWebRtc = true;
+                        isStreaming = true;
+                        chronometer.setVisibility(View.VISIBLE);
+                        chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+                        chronometer.start();
+                        isRunning = true;
+                    } else {
+                        // Stream Entire screen via MediaProjection and ScreenWebRtcService
+                        Intent screenCaptureIntent = mediaProjectionManager.createScreenCaptureIntent();
+                        startActivityForResult(screenCaptureIntent, REQUEST_CODE_WEBRTC_STREAM);
+                    }
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a Room ID", Toast.LENGTH_SHORT).show();
                 }
@@ -1384,11 +1435,17 @@ fileExplorer.setOnClickListener(new View.OnClickListener() {
     }
 
 private void sendCommandToService(String targetId, String command) {
-    Intent intent = new Intent(this, ScreenWebRtcService.class);
-    intent.setAction(ScreenWebRtcService.ACTION_SEND_COMMAND);
-    intent.putExtra(ScreenWebRtcService.EXTRA_TARGET_ID, targetId);
-    intent.putExtra(ScreenWebRtcService.EXTRA_COMMAND, command);
+    Intent intent = new Intent(this, DrawingViewWebRtcService.class);
+    intent.setAction(DrawingViewWebRtcService.ACTION_SEND_COMMAND);
+    intent.putExtra(DrawingViewWebRtcService.EXTRA_TARGET_ID, targetId);
+    intent.putExtra(DrawingViewWebRtcService.EXTRA_COMMAND, command);
     startService(intent);
+
+    Intent screenIntent = new Intent(this, ScreenWebRtcService.class);
+    screenIntent.setAction(ScreenWebRtcService.ACTION_SEND_COMMAND);
+    screenIntent.putExtra(ScreenWebRtcService.EXTRA_TARGET_ID, targetId);
+    screenIntent.putExtra(ScreenWebRtcService.EXTRA_COMMAND, command);
+    startService(screenIntent);
 }
 
     private void viewWebPage() {
@@ -2061,7 +2118,7 @@ private void sendCommandToService(String targetId, String command) {
             } else if(requestCode==REQUEST_CODE_WEBRTC_STREAM){
 				startService(ScreenWebRtcService.getStartIntent(this,resultCode,data,currentRoomId));
 				isWebRtc=true;
-				
+				isStreaming=true;
 				}else if (requestCode == REQUEST_CODE_BOTH) {
                 startService(ScreenCaptureAndLiveService.getStartIntent(this, resultCode, data, rtmp_url));
                 isBothLiveAndScreen = true;
@@ -2083,20 +2140,23 @@ private void sendCommandToService(String targetId, String command) {
     }
 
     private boolean checkPermissions() {
-        return  ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED;
+        for (String perm : getAppPermissions()) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
-    public boolean askPermissions(){
-        List<String> listPermissions= new ArrayList<>();
-        for (String perm:appPermissions) {
+
+    public boolean askPermissions() {
+        List<String> listPermissions = new ArrayList<>();
+        for (String perm : getAppPermissions()) {
             if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
                 listPermissions.add(perm);
             }
         }
-        if (!listPermissions.isEmpty()){
-            ActivityCompat.requestPermissions(this,listPermissions.toArray(new String[listPermissions.size()]),REQUEST_CODE);
+        if (!listPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissions.toArray(new String[0]), REQUEST_CODE);
             return false;
         }
         return true;
@@ -2134,67 +2194,68 @@ private void sendCommandToService(String targetId, String command) {
         Toast.makeText(this, "Payment failed "+s, Toast.LENGTH_SHORT).show();
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode,  String[] permissions,  int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
-            HashMap<String,Integer> permissionResults=new HashMap<>();
-            int deniedCount=0;
-            for (int i=0; i< grantResults.length;i++){
-                if (grantResults[i]!=PackageManager.PERMISSION_GRANTED){
-                    permissionResults.put(permissions[i],grantResults[i]);
+            HashMap<String, Integer> permissionResults = new HashMap<>();
+            int deniedCount = 0;
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    permissionResults.put(permissions[i], grantResults[i]);
                     deniedCount++;
-
                 }
             }
-            if (deniedCount==0){
-                Toast.makeText(MainActivity.this,"Permission granted",Toast.LENGTH_SHORT).show();
-            }else{
-                for (Map.Entry<String,Integer>entry:permissionResults.entrySet()){
-                    String perName=entry.getKey();
-                    int permResult=entry.getValue();
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,perName)){
-                        new AlertDialog.Builder(this)
-                                .setTitle("Permission")
-                                .setCancelable(false)
-                                .setMessage("Please provide the required permission for using all the features")
-                                .setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        askPermissions();
-                                    }
-                                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).create().show();
-                    }else{
-                        new AlertDialog.Builder(this)
-                                .setTitle("PermissionsDenied")
-                                .setCancelable(false)
-                                .setMessage("Permission Denied")
-                                .setCancelable(false)
-                                .setMessage("You have denied some permissions. Allow all permissions at [Settings] > [Permissions]")
-                                .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        Intent intent=new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                                Uri.fromParts("package",getPackageName(),null));
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }).setNegativeButton("No,exit app", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        finish();
-                                    }
-                                }).create().show();
+            if (deniedCount == 0) {
+                Toast.makeText(MainActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                boolean anyRationale = false;
+                for (Map.Entry<String, Integer> entry : permissionResults.entrySet()) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, entry.getKey())) {
+                        anyRationale = true;
                         break;
                     }
+                }
+                if (anyRationale) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Permissions")
+                            .setCancelable(false)
+                            .setMessage("Please provide permissions (storage, camera, recording) to use all features of the board.")
+                            .setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    askPermissions();
+                                }
+                            }).setNegativeButton("Continue Anyway", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).create().show();
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Permissions")
+                            .setCancelable(false)
+                            .setMessage("Some permissions were not granted. You can enable them in Settings > Permissions, or continue using the whiteboard.")
+                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    try {
+                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                                Uri.fromParts("package", getPackageName(), null));
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).setNegativeButton("Continue to Board", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).create().show();
                 }
             }
         }
@@ -2263,9 +2324,10 @@ public void onBackPressed() {
 
     private void stopAllService() {
 		if(isWebRtc){
-			Intent serviceIntent = new Intent(this, ScreenWebRtcService.class);
-            stopService(serviceIntent);
+			stopService(new Intent(this, DrawingViewWebRtcService.class));
+			stopService(new Intent(this, ScreenWebRtcService.class));
             isWebRtc=false;
+            isStreaming=false;
 	}else if (isLive){
             Intent serviceIntent = new Intent(this, RtmpServce.class);
             stopService(serviceIntent);
