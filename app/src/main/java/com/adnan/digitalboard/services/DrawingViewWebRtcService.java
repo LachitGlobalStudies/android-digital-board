@@ -190,7 +190,7 @@ public class DrawingViewWebRtcService extends Service {
 
     private void initDrawingViewCapturer() {
         try {
-            DrawingView view = activeDrawingView != null ? activeDrawingView : DrawingView.getInstance();
+            DrawingView view = activeDrawingView;
             drawingViewCapturer = new DrawingViewCapturer(view);
 
             surfaceTextureHelper = SurfaceTextureHelper.create("DrawingViewCaptureThread", rootEglBase.getEglBaseContext());

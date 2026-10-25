@@ -104,7 +104,7 @@ public class DrawingViewCapturer implements VideoCapturer {
     }
 
     private void renderDrawingViewFrame() {
-        DrawingView view = targetDrawingView != null ? targetDrawingView : DrawingView.getInstance();
+        DrawingView view = targetDrawingView;
         if (view == null || surface == null || !surface.isValid()) {
             return;
         }
