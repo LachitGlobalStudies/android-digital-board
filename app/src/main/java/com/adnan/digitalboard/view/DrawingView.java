@@ -92,8 +92,19 @@ public class DrawingView extends View {
 
 
 
+    private static DrawingView activeInstance;
+
+    public static DrawingView getInstance() {
+        return activeInstance;
+    }
+
+    public static void setInstance(DrawingView instance) {
+        activeInstance = instance;
+    }
+
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        activeInstance = this;
         if (context instanceof MainActivity) {
             this.mainActivity = (MainActivity) context;
         }
