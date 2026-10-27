@@ -1029,6 +1029,16 @@
                             android:contentDescription="@string/redo"
                             app:srcCompat="@drawable/ic_baseline_redo_24"/>
                     </LinearLayout>
+					<ImageView
+                        android:layout_gravity="center"
+                        android:id="@+id/drawingMove"
+                        android:background="@drawable/ripple_effect"
+                        android:padding="2dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginBottom="5dp"
+                        android:contentDescription="@string/draw_pen"
+                        app:srcCompat="@drawable/baseline_next_page"/>
                     <ImageView
                         android:layout_gravity="center"
                         android:id="@+id/highliter"
