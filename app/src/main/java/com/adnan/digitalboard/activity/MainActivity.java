@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements PaymentResultList
     private  CardView rtmp_url_card, cameraStreamView,cardViewFileExplorer, videoCard, webCard,scrollView,paymentCardView,cameraViewCardView,selectRecordCard;
     private VideoView videoView;
 
-    private ImageView snapClip, webClose, webFullscreen,fileclose,fileFullscreen,saveProject,colorWheel, videoClose,videoFullscreen,backWard,forward;
+    private ImageView moveDrawing, snapClip, webClose, webFullscreen,fileclose,fileFullscreen,saveProject,colorWheel, videoClose,videoFullscreen,backWard,forward;
     int originalWidth, originalHeight; // Variables to store original dimensions
     private GestureDetector gestureDetector;
     public TextView pageAll , pageCurrent;
@@ -348,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements PaymentResultList
         chromaFilterRender=new ChromaFilterRender();
         cameraStreamView=findViewById(R.id.camera_stream_view_contener);
 		sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+		moveDrawing=findViewById(R.id.drawingMove):
         background=findViewById(R.id.backgraound);
         backWard=findViewById(R.id.webBack);
         forward=findViewById(R.id.webForw);
@@ -785,6 +786,12 @@ public class MainActivity extends AppCompatActivity implements PaymentResultList
             }
 
         });
+		moveDrawing.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				drawingView.enableMode("move_drawing");
+			}
+		});
         shape_arrow_line.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
