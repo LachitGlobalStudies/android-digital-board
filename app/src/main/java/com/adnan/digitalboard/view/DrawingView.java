@@ -168,42 +168,6 @@ public class DrawingView extends View {
                 }
                 return super.onDoubleTap(event);
             }
-            @Override
-            public void onLongPress(MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-
-                resetModes();
-
-                Page currentPage = pages.get(currentPageIndex);
-                for (int i = currentPage.imageRects.size() - 1; i >= 0; i--) {
-                    Rect rect = currentPage.imageRects.get(i);
-                    if (isNearBorder(x, y, rect)) {
-                        isResizing = true;
-                        selectedImageIndex = i;
-                        resizeMode = determineResizeMode(x, y, rect);
-                        invalidate();
-                        return;
-                    } else if (rect.contains((int) x, (int) y)) {
-                        isMoving = true;
-                        selectedImageIndex = i;
-                        showDeletIcon = true;
-                        lastTouchX = x;
-                        lastTouchY = y;
-                        invalidate();
-                        return;
-                    }
-                }
-
-                selectedImageIndex = -1;
-
-                if (singlePageMode) { // ✅ check this before enabling canvas move
-                    isCanvasMoving = true;
-                    lastTouchX = x;
-                    lastTouchY = y;
-                    invalidate();
-                }
-            }
 
         });
     }
@@ -417,7 +381,41 @@ public void resetTransform() {
         if (mainActivity.pageLayout.getVisibility()==View.VISIBLE){
             mainActivity.pageLayout.setVisibility(View.GONE);
         }
+if (isMoveDrawing) {
+        float touchX = event.getX();
+        float touchY = event.getY();
 
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // Find the image or path located at (touchX, touchY)
+                selectItemAt(touchX, touchY);
+                lastTouchX = touchX;
+                lastTouchY = touchY;
+                invalidate();
+                return true;
+
+            case MotionEvent.ACTION_MOVE:
+                if (selectedImageIndex != null) {
+                    float dx = touchX - lastTouchX;
+                    float dy = touchY - lastTouchY;
+
+                    // Translate/move the selected image or path
+                    moveSelectedItem(dx, dy);
+
+                    lastTouchX = touchX;
+                    lastTouchY = touchY;
+                    invalidate();
+                }
+                return true;
+
+            case MotionEvent.ACTION_UP:
+                // Finalize position
+                return true;
+        }
+    }
+
+    // Fall back to regular drawing/paint logic when isMoveMode is false
+    return super.onTouchEvent(event);
         gestureDetector.onTouchEvent(event);
         float x = event.getX();
         float y = event.getY();
@@ -478,14 +476,7 @@ public void resetTransform() {
                 }else  if (arrowMode) {
 						lastTouchX = x;
 						lastTouchY = y;
-					}else if(isMoveDrawing){
-						selectItemAt(touchX, touchY);
-		                lastTouchX = touchX;
-		                lastTouchY = touchY;
-		                invalidate();
-		                return true;
-				
-				}
+					}
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -572,18 +563,7 @@ public void resetTransform() {
 					endX = x;
 					endY = y;
 					invalidate();
-				}else if (isMoveDrawing) {
-                    float dx = touchX - lastTouchX;
-                    float dy = touchY - lastTouchY;
-
-                    // Translate/move the selected image or path
-                    moveSelectedItem(dx, dy);
-
-                    lastTouchX = touchX;
-                    lastTouchY = touchY;
-                    invalidate();
-                }
-                return true;
+				}
 			 
                 break;
 
