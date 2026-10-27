@@ -69,7 +69,7 @@ public class DrawingView extends View {
     private RectF deleteIconRect;
     private Bitmap deleteIcon;
     boolean showDeletIcon=false;
-    private boolean cropMode = false;
+    private boolean isMoveDrawing=false, cropMode = false;
     private Rect cropRect = new Rect(); // Holds the cropping area
     private Paint cropRectPaint;
     private boolean drawingMoveMode = false;
@@ -478,7 +478,14 @@ public void resetTransform() {
                 }else  if (arrowMode) {
 						lastTouchX = x;
 						lastTouchY = y;
-					}
+					}else if(isMoveDrawing){
+						selectItemAt(touchX, touchY);
+		                lastTouchX = touchX;
+		                lastTouchY = touchY;
+		                invalidate();
+		                return true;
+				
+				}
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -565,7 +572,19 @@ public void resetTransform() {
 					endX = x;
 					endY = y;
 					invalidate();
-				}
+				}else if (isMoveDrawing) {
+                    float dx = touchX - lastTouchX;
+                    float dy = touchY - lastTouchY;
+
+                    // Translate/move the selected image or path
+                    moveSelectedItem(dx, dy);
+
+                    lastTouchX = touchX;
+                    lastTouchY = touchY;
+                    invalidate();
+                }
+                return true;
+			 
                 break;
 
             case MotionEvent.ACTION_UP:
@@ -1017,6 +1036,9 @@ public void redoImage() {
                 eraseMode = true;
                 selectedImageIndex = -1;
                 break;
+			case "move_drawing":
+				isMoveDrawing=true;
+				break;
             case "circle":
                 circleMode = true;
                 selectedImageIndex = -1;
@@ -1111,7 +1133,7 @@ public void redoImage() {
 	{
 		// TODO: Implement this method
 
-     arrowMode= highlightMode =drawingMoveMode= cropMode= ellipsMode=cubeMode=dotLineMode=coneMode=cylinderMode= isResizing = isMoving =eraseMode=circleMode= paintMode=lineMode=triangleMode=rectangleMode=sphereMode=hemisphereMode=false;
+     isMoveDrawing= arrowMode= highlightMode =drawingMoveMode= cropMode= ellipsMode=cubeMode=dotLineMode=coneMode=cylinderMode= isResizing = isMoving =eraseMode=circleMode= paintMode=lineMode=triangleMode=rectangleMode=sphereMode=hemisphereMode=false;
 
     }
     public void setStrokeSize(int progress) {
